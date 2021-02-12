@@ -1,0 +1,39 @@
+---
+
+  - name: TEST REACHABILITY
+    hosts: iosxe
+    connection: network_cli
+    gather_facts: no
+
+    vars:
+      target_ips:
+        - "10.0.0.15"
+        - "10.0.0.2"
+        - "198.6.1.4"
+
+    tasks:
+
+      - name: ENSURE DIRECTORY FOR EACH DEVICE EXISTS
+        file:
+          path: ./ping-responses/
+          state: directory
+
+      - name: SEND PING COMMANDS TO DEVICES
+        ios_command:
+          commands: "ping {{ item }} repeat 2"
+        register: ping_responses
+        loop: "{{ target_ips }}"
+
+      - name: VERIFY REGISTERED VARIABLE
+        debug:
+          var: ping_responses
+
+      - name: TEST LOOPING OVER REGISTERED VARIABLE
+        debug:
+          var: "{{ item }}"
+        loop: "{{ ping_responses.results }}"
+
+      - name: SAVE OUTPUTS TO INDIVIDUAL FILES
+        template:
+          src: basic-copy-single.j2
+          dest: ./ping-responses/ping_responses_from_{{ inventory_hostname }}.txt

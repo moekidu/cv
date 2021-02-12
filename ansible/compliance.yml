@@ -1,0 +1,67 @@
+---
+
+  - name: IOS COMPLIANCE
+    hosts: iosxe
+    connection: network_cli
+    gather_facts: no
+
+    tasks:
+
+      - name: IOS show version
+        ios_command:
+          commands:
+            - show version
+        register: output
+
+      - name: CHECK OS AND CONFIG REGISTER
+        assert:
+          that:
+           - "'17.01.01' in output['stdout'][0]"
+           - "'0x2102' in output['stdout'][0]"
+
+  - name: JUNOS COMPLIANCE
+    hosts: vmx
+    connection: netconf
+    gather_facts: no
+    tags: vmx
+
+    tasks:
+
+      - name: JUNOS show version
+        junos_command:
+          commands:
+            - show system storage
+          display: json
+        register: output
+
+      - name: VIEW JSON DATA
+        debug:
+          var: output
+
+      - name: CREATE NEW VARIABLES
+        set_fact:
+          #percent: "{{ output['stdout'][0]['system-storage-information'][0]['filesystem'][0]['used-percent'][0]['data'] }}"
+          percent: "60"
+          filesystem: "{{ output['stdout'][0]['system-storage-information'][0]['filesystem'][0]['filesystem-name'][0]['data'] }}"
+          blocks: "{{ output['stdout'][0]['system-storage-information'][0]['filesystem'][0]['available-blocks'][0]['data'] }}"
+          storage: "{{ output['stdout'][0]['system-storage-information'][0]['filesystem'][0]['available-blocks'][0]['attributes']['junos:format'] }}"
+
+      - name: VIEW DATA STORED IN NEW VARIABLES
+        debug:
+          msg: "Percent: {{ percent }}%,  filesystem: {{ filesystem }}, Blocks: {{ blocks }}, Storage: {{ storage }}"
+
+      - name: CHECK STORAGE FILESYSTEM PERCENT
+        assert:
+          that:
+            - "percent | int  <= 50"
+          fail_msg: "Warning!! filesystem {{ filesystem }} is at {{ percent }}%"
+          success_msg: "Current filesystem  {{ filesystem }} is at {{ percent }}%"
+        ignore_errors: true
+        
+      - name: CHECK STORAGE FILESYSTEM AVAILABILITY
+        assert:
+          that:
+            - "blocks | int >= 4194304"
+          fail_msg: "Warning!! filesystem {{ filesystem }} is at {{ storage }}"
+          success_msg: "Current filesystem  {{ filesystem }} is at {{ storage }}"
+        ignore_errors: true

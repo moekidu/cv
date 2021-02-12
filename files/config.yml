@@ -1,0 +1,19 @@
+---
+
+hostname: SWITCH_NYC
+
+
+vlans:
+  - vlan_id: 10
+    name: web_vlan
+  - vlan_id: 11
+    name: app_vlan
+  - vlan_id: 12
+    name: db_vlan
+
+interface:
+  - Eth1/1
+  - Eth1/2
+  - Eth1/3
+  - Eth1/4
+

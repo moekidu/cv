@@ -1,0 +1,51 @@
+---
+
+  - name: BACKUP SHOW VERSION FOR IOS
+    hosts: iosxe
+    connection: network_cli
+    gather_facts: no
+
+    tasks:
+      - name: GET SHOW COMMANDS
+        ios_command:
+          commands: show version
+        register: config_data
+
+      - name: VIEW DATA STORED IN CONFIG_DATA
+        debug:
+          var: config_data
+
+      - name: GENERATE DIRECTORIES
+        file:
+          path: ./command-outputs/{{ ansible_network_os }}
+          state: directory
+
+      - name: SAVE SH VERSION TO FILE
+        copy :
+          content: "{{ config_data['stdout'][0] }}"
+          dest: ./command-outputs/{{ ansible_network_os }}/{{ inventory_hostname}}-show_version.txt    
+
+  - name: BACKUP SHOW VERSION FOR JUNOS
+    hosts: vmx1
+    connection: netconf
+    gather_facts: no
+
+    tasks:
+      - name: GET SHOW COMMANDS
+        junos_command:
+          commands: show version  
+        register: config_data
+
+      - name: VIEW DATA STORED IN CONFIG_DATA
+        debug:
+          var: config_data
+
+      - name: GENERATE DIRECTORIES
+        file:
+          path: ./command-outputs/{{ ansible_network_os }}/
+          state: directory                  
+
+      - name: SAVE SH VERSION TO FILE
+        copy :
+          content: "{{ config_data['stdout'][0] }}"
+          dest: ./command-outputs/{{ ansible_network_os }}/show_version.txt
