@@ -1,0 +1,13 @@
+---
+
+- name: GENERATE SNMP CONFIGS USING JINJA2
+  hosts: AMER, EMEA
+  connection: local
+  gather_facts: no
+
+  tasks:
+ 
+    - name: GENERATE SNMP CONFIGURATIONS
+      template:
+         src: "{{ ansible_network_os }}-snmpv2.j2"
+         dest: "./configs/{{ inventory_hostname }}-snmp.cfg"

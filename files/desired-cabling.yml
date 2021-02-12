@@ -1,0 +1,12 @@
+---
+
+cabling:
+  N9K1:
+    - { local_interface: mgmt0, neighbor: PERIMETER, neighbor_interface: FastEthernet1/0/9 }
+    - { local_interface: Ethernet2/1, neighbor: 9372-1, neighbor_interface: Ethernet1/49 }
+    - { local_interface: Ethernet2/2, neighbor: 9372-2, neighbor_interface: Ethernet1/49 }
+    - { local_interface: Ethernet2/3, neighbor: 9372-1, neighbor_interface: Ethernet1/51 }
+    - { local_interface: Ethernet2/4, neighbor: 9372-2, neighbor_interface: Ethernet1/51 }
+    - { local_interface: Ethernet2/10, neighbor: 9372-2, neighbor_interface: Ethernet1/51 }
+  N9K2:
+    - { local_interface: Ethernet2/4, neighbor: 9372-2, neighbor_interface: Ethernet1/51 }

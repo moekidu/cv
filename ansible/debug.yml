@@ -1,0 +1,40 @@
+---
+
+  - name: USING THE DEBUG MODULE
+    hosts: csr1
+    connection: local
+    gather_facts: no
+
+
+    tasks:
+      - name: DEBUG AND PRINT TO TERMINAL
+        debug: 
+          var: ntc_vendor
+
+      - name: DEBUG AND PRINT DEVICE TYPE TO TERMINAL
+        debug:
+          var: ntc_device_type
+
+      - name: DEBUG AND PRINT THE OS
+        debug: 
+          msg: "The OS for {{ inventory_hostname }} is {{ ansible_network_os }}."
+
+      - name: DEBUG AND PRINT INVENTORY_HOSTNAME VS ANSIBLE_HOST
+        debug: 
+           msg: "Devices defined in inventory_hostname: {{ inventory_hostname }} and ansible_host: {{ ansible_host }}"
+
+      - name: DEBUG AND PRINT LIST OF PLAY_HOSTS
+        debug: 
+          var: play_hosts
+
+      - name: DEBUG AND PRINT GROUP_NAMES
+        debug: 
+          var: group_names
+
+      - name: DEBUG AND PRINT GROUPS
+        debug: 
+          var: groups
+
+      - name: DEBUG AND PRINT ANSIBLE_VERSION
+        debug: 
+           msg: "Ansible Version: '{{ ansible_version }}'"
